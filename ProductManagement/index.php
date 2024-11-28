@@ -1,36 +1,29 @@
 <?php
-require_once 'ProductAPI.php';
+require_once __DIR__ . '/Controller/ProductController.php';
 
-// Khởi tạo đối tượng ProductAPI
-$api = new ProductAPI('localhost', 'productDB', 'root', '');
-
-// Lấy phương thức HTTP và URI
 $method = $_SERVER['REQUEST_METHOD'];
-$request = explode('/', trim($_SERVER['PATH_INFO'], '/'));
+$request = isset($_SERVER['PATH_INFO']) ? explode('/', trim($_SERVER['PATH_INFO'], '/')) : [];
+
+$controller = new ProductController();
+
+if (empty($request) || $request[0] !== 'products') {
+    header("HTTP/1.0 404 Not Found");
+    // echo "Invalid endpoint";
+    $controller->index();
+    exit;
+}
+
 
 switch ($method) {
     case 'GET':
-        if ($request[0] === 'products') {
-            $api->getProducts();
-        } else {
-            $api->sendResponse(404, "Endpoint not found");
-        }
+        $controller->index();
         break;
     case 'POST':
-        if ($request[0] === 'products') {
-            $name = $_POST['name'] ?? '';
-            $price = $_POST['price'] ?? '';
-
-            if (!$name || !$price) {
-                $api->sendResponse(400, "Name and price are required");
-            } else {
-                $api->createProduct($name, $price);
-            }
-        } else {
-            $api->sendResponse(404, "Endpoint not found");
-        }
+        $data = json_decode(file_get_contents('php://input'), true);
+        $controller->store($data);
         break;
     default:
-        $api->sendResponse(405, "Method Not Allowed");
+        header("HTTP/1.0 405 Method Not Allowed");
+        echo "Method Not Allowed";
         break;
 }
