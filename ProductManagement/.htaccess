@@ -1,5 +1,27 @@
-AcceptPathInfo On
+# RewriteEngine On
+# RewriteRule .\* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+# RewriteBase /
+# RewriteRule ^index.php$ - [L]
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteRule . /index.php [L]
+
+
+# Bật mod_rewrite nếu chưa bật
 RewriteEngine On
+
+# Đặt RewriteBase để chỉ định đường dẫn cơ bản của ứng dụng
+RewriteBase /AHT_Nov/l12+/ProductManagement/
+
+# Đảm bảo rằng các URL không phải là tệp hoặc thư mục thật sẽ được chuyển hướng về index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php/$1 [L]
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Nếu muốn đảm bảo xử lý các yêu cầu của REST API (ví dụ: /products, /products/add, /products/edit), có thể sử dụng các quy tắc sau:
+RewriteRule ^products/?$ index.php/products [L]
+RewriteRule ^products/add/?$ index.php/products/add [L]
+RewriteRule ^products/edit/?$ index.php/products/edit [L]
+RewriteRule ^products/delete/?$ index.php/products/delete [L]
+
+# Thêm các quy tắc cho các route khác nếu cần thiết

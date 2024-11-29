@@ -1,43 +1,58 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const apiUrl = "index.php/products";
-
-  function getProducts() {
-    fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        const tableBody = document.querySelector("#productTable tbody");
-        tableBody.innerHTML = "";
-        data.data.forEach((product) => {
-          const row = `
-                        <tr>
-                            <td>${product.id}</td>
-                            <td>${product.name}</td>
-                            <td>${product.price}</td>
-                        </tr>
-                    `;
-          tableBody.innerHTML += row;
-        });
+function getProducts() {
+  $.ajax({
+    url: "http://localhost/AHT_Nov/l12+/ProductManagement/products",
+    method: "GET",
+    success: function (response) {
+      let products = response.data;
+      let tableBody = $("#productTable tbody");
+      tableBody.empty();
+      products.forEach(function (product) {
+        tableBody.append(`
+                  <tr>
+                      <td>${product.id}</td>
+                      <td>${product.name}</td>
+                      <td>${product.price}</td>
+                      <td><a class="btn btn-primary" href="http://localhost/AHT_Nov/l12+/ProductManagement/products/edit?id=${product.id}" role="button">Edit</a></td>
+                      <td><a class="btn btn-primary" href="http://localhost/AHT_Nov/l12+/ProductManagement/products/delete?id=${product.id}" role="button">Delete</a></td>
+                  </tr>
+              `);
       });
-  }
+    },
+  });
+}
 
-  document
-    .querySelector("#addProductForm")
-    .addEventListener("submit", function (e) {
-      e.preventDefault();
-      const name = document.querySelector("#productName").value;
-      const price = document.querySelector("#productPrice").value;
+$("#searchForm").submit(function (event) {
+  event.preventDefault();
+  let query = $("#search").val();
+  console.log("query:", query);
 
-      fetch(apiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, price }),
-      })
-        .then((response) => response.json())
-        .then(() => {
-          alert("Product added successfully!");
-          getProducts();
-        });
-    });
+  $.ajax({
+    url: "http://localhost/AHT_Nov/l12+/ProductManagement/products/search",
+    method: "GET",
+    contentType: "application/json",
+    data: { query: query },
+    success: function (response) {
+      let products = response.data;
+      let tableBody = $("#productTable tbody");
+      tableBody.empty();
+      products.forEach(function (product) {
+        tableBody.append(`
+                  <tr>
+                      <td>${product.id}</td>
+                      <td>${product.name}</td>
+                      <td>${product.price}</td>
+                      <td><a class="btn btn-primary" href="http://localhost/AHT_Nov/l12+/ProductManagement/products/edit?id=${product.id}" role="button">Edit</a></td>
+                      <td><a class="btn btn-primary" href="http://localhost/AHT_Nov/l12+/ProductManagement/products/delete?id=${product.id}" role="button">Delete</a></td>
+                  </tr>
+              `);
+      });
+    },
+    error: function (xhr, status, error) {
+      alert("Error finding product: " + error);
+    },
+  });
+});
 
+$(document).ready(function () {
   getProducts();
 });

@@ -37,4 +37,13 @@
 
 ## Notes
 
+### 28/11
+
 - Sử dụng postman để gửi request
+- Sử dụng jquery và ajax để gửi request
+- Gửi response từ php
+
+### 29/11
+
+- Đường dẫn thư mục không nên chứa ký tự trống
+- Dùng request_uri để lấy đường dẫn
