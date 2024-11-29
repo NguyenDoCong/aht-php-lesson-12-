@@ -47,3 +47,7 @@
 
 - Đường dẫn thư mục không nên chứa ký tự trống
 - Dùng request_uri để lấy đường dẫn
+
+## Mindmap
+![jQuery](https://github.com/user-attachments/assets/7dc42f32-640c-4271-ab57-ab714c91af51)
+
